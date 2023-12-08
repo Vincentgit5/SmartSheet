@@ -41,7 +41,7 @@ public class UserDetailServices implements UserDetailsService {
 //            throw new RuntimeException("Group does not have any roles");
 //        }	
         Set<GrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole().getName()))
+                .map(role -> new SimpleGrantedAuthority((role.getRole()).getName()))
                 .collect(Collectors.toSet());
         return new org.springframework.security.core.userdetails.User(
                 username, user.getPassword(), user.isEnabled(),

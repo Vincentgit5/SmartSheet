@@ -13,7 +13,10 @@ import com.ppp.user.model.Role;
 public interface GroupRoleRepository extends JpaRepository<GroupeRole, Long> {
 
 	Collection<Role> findByGroupeAndRoleIn(Groupe group, Set<Role> roles);
+	List<Role> findByRole(Role role);
 
-	List<GroupeRole> findByGroupe(Groupe group); 
+	List<GroupeRole> findByGroupe(Groupe group);
+	Role findRoleByGroupe(Groupe group);
+	void deleteByGroupe(Groupe group); 
 	
 }

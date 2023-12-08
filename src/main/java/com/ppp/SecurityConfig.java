@@ -18,26 +18,29 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(
-						(authorize) -> authorize
-						.antMatchers("/pages-/**").permitAll()
-						.antMatchers("/index").permitAll()
-						.antMatchers("user-pages-register").permitAll()
-						.antMatchers("/static/**").permitAll()
-						.antMatchers("/users").permitAll()
-						.antMatchers("user/pages-groupe-register/save").permitAll()
-						.antMatchers("/Users")
-						.hasRole("ADMIN"))
-//				.formLogin(form -> form
-//						.loginPage("/login")
-//						.loginProcessingUrl("/login")
-//						.defaultSuccessUrl("/users")
-//						.permitAll())
-				.logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll());
-				
-		return http.build();
-		
+	    return http.csrf(csrf -> csrf.disable())
+	            .authorizeRequests(authorize -> authorize
+              		.antMatchers("/assets/**").permitAll()
+	            	.antMatchers("/login").permitAll()
+	            	.anyRequest().permitAll()
+	            )
+	    
+	            .formLogin(form -> form
+	                .loginPage("/login")
+	                .usernameParameter("username")
+	                .passwordParameter("password")
+	                .defaultSuccessUrl("/")
+	                .failureUrl("/login?error=true")
+	            )
+	            .logout(logout -> logout
+	                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+	                .logoutSuccessUrl("/login")
+	                .invalidateHttpSession(true)
+	                .deleteCookies("JSESSIONID")
+	                .permitAll()
+	            )
+	            
+	            .build();
 	}
 
 	@Bean
@@ -47,10 +50,10 @@ public class SecurityConfig {
 				.passwordEncoder(passwordEncoder).and().build();
 	}
 	
-	 public void configure(WebSecurity web) throws Exception {
-	        web
-	            .ignoring()
-	            .antMatchers("/assets/**");
-	    }
+//	public void configure(WebSecurity web) throws Exception {
+//	    web.ignoring()
+//	       .antMatchers("/assets/**", "/css/**", "/js/**", "/images/**", "/assets/");
+//	}
+
 
 }

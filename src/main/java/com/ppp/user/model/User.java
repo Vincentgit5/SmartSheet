@@ -1,7 +1,6 @@
 package com.ppp.user.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -57,11 +54,9 @@ public class User implements UserDetails {
 	@Column(nullable = false, length = 255)
 	private String username;
 	
-	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate createdAt ;
 
-//	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@ManyToOne( optional = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "groupe_id")
 	private  Groupe groupe;
 	

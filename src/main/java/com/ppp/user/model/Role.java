@@ -1,5 +1,6 @@
 package com.ppp.user.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -9,6 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +31,20 @@ public class Role {
 	@Column(nullable = false, unique = true, length = 50)
 	private String name;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDateTime createdRoleDate;
+		
 	private String description;
+	
 	
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "role")
 	private List<GroupeRole> groupRoles;
+	
+	@PrePersist
+    public void prePersist() {
+        if (createdRoleDate == null) {
+            createdRoleDate = LocalDateTime.now();
+        }
+    }
 
 }

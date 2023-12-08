@@ -4,14 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ppp.user.exceptions.UserAlreadyExistException;
+import com.ppp.user.exceptions.UserNotFoundException;
 import com.ppp.user.model.Groupe;
+import com.ppp.user.model.Role;
 import com.ppp.user.model.User;
 import com.ppp.user.repository.GroupRepository;
+import com.ppp.user.repository.GroupRoleRepository;
+import com.ppp.user.repository.RoleRepository;
 import com.ppp.user.repository.UserRepository;
+import com.ppp.user.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,6 +28,10 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private GroupRepository groupRepository;
+	@Autowired
+	private RoleRepository roleRepository;
+	@Autowired
+	private GroupRoleRepository groupRoleRepository;
 
 	
 	@Override
@@ -51,32 +61,37 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(newUser);
 		
 	}
- 
-	@Override
-	public String deleteByUsername(String username, User user){
-		User userExist = userRepository.findByUsername(username);
-		if(userExist == null) {
-			throw new RuntimeException("User not found : " + user.getUsername());
-		}
-		userRepository.delete(userExist);
-		
-		return " The user was deleted successfully";
-	}
+	
+	 @Override
+	    public void deleteUserByUsername(String username) {
+	        User user = userRepository.findByUsername(username);
+	        if (user != null) {
+	            Groupe groupe = user.getGroupe();
+	            Role role = groupRoleRepository.findRoleByGroupe(groupe);
+
+	            groupe.getUsers().remove(user);
+	            groupRoleRepository.deleteByGroupe(groupe);
+
+	            userRepository.delete(user);
+	            groupRepository.delete(groupe);
+	            roleRepository.delete(role);
+	        }
+	    }
 
 	@Override
-	public User findByUsernameOrEmail(String email, String username, User user){
+	public User findByUsernameOrEmail(String email, String username, User user) throws UserNotFoundException{
 		User existingUser = userRepository.findByUsernameOrEmail(email, username);
 		if(existingUser == null) {
-			throw new RuntimeException("User not found : " + user.getEmail());
+			throw new UsernameNotFoundException("User not found : " + user.getEmail());
 		}
 		return (existingUser);
 	}
 
 	@Override
-	public String updateUser(User user, String email, String username) {
+	public String updateUser(User user, String email, String username) throws UserNotFoundException {
 		User existingUser = userRepository.findByUsernameOrEmail(email, username);
 				if(existingUser == null) {
-					throw new RuntimeException("User not found : " + user.getEmail());
+					throw new UserNotFoundException("User not found : " + user.getEmail());
 				}
 		User updateUser = new User();
 		updateUser.setUsername(user.getUsername());
@@ -84,7 +99,6 @@ public class UserServiceImpl implements UserService {
 		updateUser.setLastName(user.getLastName());
 		updateUser.setAddress(user.getAddress());
 		updateUser.setEmail(user.getEmail());
-		updateUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		updateUser.setMobile(user.getMobile());
 		updateUser.setCreatedAt(LocalDate.now());
 	        userRepository.save(updateUser);
