@@ -2,9 +2,11 @@ package com.ppp.user.repository;
 
 
 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ppp.user.model.User;
+import com.ppp.user.model.dto.UserDTO;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	

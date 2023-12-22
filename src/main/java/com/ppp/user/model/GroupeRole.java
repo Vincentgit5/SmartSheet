@@ -3,7 +3,6 @@ package com.ppp.user.model;
 
 
 
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class GroupeRole {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@ManyToOne
@@ -32,7 +31,7 @@ public class GroupeRole {
 	
 	@ManyToOne
 	@JoinColumn(name = "role_id", referencedColumnName = "id")
-	private  Role role;
+	private Role  role;
 
 
 	

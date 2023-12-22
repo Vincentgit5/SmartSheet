@@ -1,10 +1,4 @@
-/**
-* Template Name: NiceAdmin
-* Updated: Sep 18 2023 with Bootstrap v5.3.2
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+
 (function() {
   "use strict";
 
@@ -301,22 +295,37 @@
    */
   const datatables = select('.datatable', true)
   datatables.forEach(datatable => {
-    new simpleDatatables.DataTable(datatable);
+    new simpleDatatables.DataTable(datatable, {
+      perPageSelect: [5, 10, 15, ["All", -1]],
+      columns: [{
+          select: 2,
+          sortSequence: ["desc", "asc"]
+        },
+        {
+          select: 3,
+          sortSequence: ["desc"]
+        },
+        {
+          select: 4,
+          cellClass: "green",
+          headerClass: "red"
+        }
+      ]
+    });
   })
 
-//  /**
-//   * Autoresize echart charts
-//   */
-//  const mainContainer = select('#main');
-//  if (mainContainer) {
-//    setTimeout(() => {
-//      new ResizeObserver(function() {
-//        select('.echart', true).forEach(getEchart => {
-//          echarts.getInstanceByDom(getEchart).resize();
-//        })
-//      }).observe(mainContainer);
-//    }, 200);
-//  }
-//  
+  /**
+   * Autoresize echart charts
+   */
+  const mainContainer = select('#main');
+  if (mainContainer) {
+    setTimeout(() => {
+      new ResizeObserver(function() {
+        select('.echart', true).forEach(getEchart => {
+          echarts.getInstanceByDom(getEchart).resize();
+        })
+      }).observe(mainContainer);
+    }, 200);
+  }
 
 })();

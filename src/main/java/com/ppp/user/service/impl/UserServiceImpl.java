@@ -1,21 +1,17 @@
 package com.ppp.user.service.impl;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.ppp.user.exceptions.UserAlreadyExistException;
-import com.ppp.user.exceptions.UserNotFoundException;
+import org.hibernate.Filter;
+import org.hibernate.Session;
+import javax.persistence.EntityManager;
 import com.ppp.user.model.Groupe;
-import com.ppp.user.model.Role;
 import com.ppp.user.model.User;
+import com.ppp.user.model.dto.UserDTO;
 import com.ppp.user.repository.GroupRepository;
-import com.ppp.user.repository.GroupRoleRepository;
-import com.ppp.user.repository.RoleRepository;
 import com.ppp.user.repository.UserRepository;
 import com.ppp.user.service.UserService;
 
@@ -29,81 +25,83 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private GroupRepository groupRepository;
 	@Autowired
-	private RoleRepository roleRepository;
-	@Autowired
-	private GroupRoleRepository groupRoleRepository;
+	private EntityManager entityManager;
 
-	
+//<-----------------List user------------------------>
 	@Override
-	public List<User> getAllUser() {
-		
+	public Iterable<User> getAllUser(boolean isDeleted) {
+	   Session session = entityManager.unwrap(Session.class);
+	   Filter filter = session.enableFilter("deletedUsertFilter");
+	   filter.setParameter("isDeleted", isDeleted);
+       Iterable<User> users =  userRepository.findAll();
+       session.disableFilter("deletedUsertFilter");
 		return userRepository.findAll();
 	}
 
+//<-----------------Create user <useing userDTO------------------->
 	@Override
-	public User registerUser(User user) throws Exception {
-		User existUser = userRepository.findByEmail(user.getEmail());
-		if(existUser != null) {
-            throw new UserAlreadyExistException("Email alredy exist: "
-              + user.getEmail());
-        }
+	public User createUser(UserDTO userDTO) {
 		User newUser = new User();
-	    newUser.setUsername(user.getUsername());
-	    newUser.setFirstName(user.getFirstName());
-	    newUser.setLastName(user.getLastName());
-	    newUser.setAddress(user.getAddress());
-	    newUser.setEmail(user.getEmail());
-	    newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-	    newUser.setMobile(user.getMobile());
+	    newUser.setUsername(userDTO.getUsername());
+	    newUser.setFirstName(userDTO.getFirstName());
+	    newUser.setLastName(userDTO.getLastName());
+	    newUser.setAddress(userDTO.getAddress());
+	    newUser.setEmail(userDTO.getEmail());
+	    newUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+	    newUser.setMobile(userDTO.getMobile());
 	    newUser.setCreatedAt(LocalDate.now());
-	    newUser.setGroupe(user.getGroupe());
-	      
-    return userRepository.save(newUser);
+	    String getGroup = userDTO.getGroupe();
+	    Groupe groupe = groupRepository.findByName(getGroup);
+	    newUser.setGroupe(groupe);
+	    
+	   userRepository.save(newUser);
+	   return newUser;	
+	}
+
+	@Override
+	public User findUserByUsername(String username) {
+		return userRepository.findByUsername(username);
+	}
+
+	@Override
+	public void deleteUserByUsername(String username) {
+		userRepository.deleteByUsername(username);
 		
 	}
-	
-	 @Override
-	    public void deleteUserByUsername(String username) {
-	        User user = userRepository.findByUsername(username);
-	        if (user != null) {
-	            Groupe groupe = user.getGroupe();
-	            Role role = groupRoleRepository.findRoleByGroupe(groupe);
 
-	            groupe.getUsers().remove(user);
-	            groupRoleRepository.deleteByGroupe(groupe);
+//<---------------Get user by username using DTO objet------------------->	
+	public UserDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return null;
+        }
+        UserDTO userDTO = new UserDTO();
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setMobile(user.getMobile());
+        userDTO.setMobile(user.getMobile());
+        userDTO.setPassword(user.getPassword());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
 
-	            userRepository.delete(user);
-	            groupRepository.delete(groupe);
-	            roleRepository.delete(role);
-	        }
-	    }
+        return userDTO;
+    }
 
 	@Override
-	public User findByUsernameOrEmail(String email, String username, User user) throws UserNotFoundException{
-		User existingUser = userRepository.findByUsernameOrEmail(email, username);
+	public String updateUser(UserDTO updatedUserDTO) {
+		User existingUser = userRepository.findByUsername(updatedUserDTO.getUsername());
 		if(existingUser == null) {
-			throw new UsernameNotFoundException("User not found : " + user.getEmail());
+			return "error";
 		}
-		return (existingUser);
+		existingUser.setFirstName(updatedUserDTO.getFirstName());
+		existingUser.setLastName(updatedUserDTO.getLastName());
+		existingUser.setUsername(updatedUserDTO.getUsername());
+		existingUser.setEmail(updatedUserDTO.getEmail());
+		existingUser.setAddress(updatedUserDTO.getAddress());
+		existingUser.setMobile(updatedUserDTO.getMobile());
+		 userRepository.save(existingUser);
+		
+		return " success";
 	}
-
-	@Override
-	public String updateUser(User user, String email, String username) throws UserNotFoundException {
-		User existingUser = userRepository.findByUsernameOrEmail(email, username);
-				if(existingUser == null) {
-					throw new UserNotFoundException("User not found : " + user.getEmail());
-				}
-		User updateUser = new User();
-		updateUser.setUsername(user.getUsername());
-		updateUser.setFirstName(user.getFirstName());
-		updateUser.setLastName(user.getLastName());
-		updateUser.setAddress(user.getAddress());
-		updateUser.setEmail(user.getEmail());
-		updateUser.setMobile(user.getMobile());
-		updateUser.setCreatedAt(LocalDate.now());
-	        userRepository.save(updateUser);
-		return null;
-	}
-
-
 }

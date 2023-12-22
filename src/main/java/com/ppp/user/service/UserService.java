@@ -1,14 +1,13 @@
 package com.ppp.user.service;
 
-import java.util.List;
 
-import com.ppp.user.exceptions.UserNotFoundException;
 import com.ppp.user.model.User;
+import com.ppp.user.model.dto.UserDTO;
 
 public interface UserService {
-	List<User> getAllUser();
-	User registerUser(User user) throws Exception;
-	User findByUsernameOrEmail(String email, String username, User user) throws UserNotFoundException ;
-	String updateUser(User user, String email, String username) throws UserNotFoundException;
+	Iterable<User> getAllUser(boolean isDeleted);
+	User createUser(UserDTO userDTO);
 	void deleteUserByUsername(String username);
+	User findUserByUsername(String username);
+	String updateUser(UserDTO updatedUserDTO);
 }

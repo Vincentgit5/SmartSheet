@@ -14,10 +14,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +28,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE tbl_user SET deleted = true WHERE id=?")
+@FilterDef(name = "deletedUsertFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedUsertFilter", condition = "deleted = :isDeleted")
 @Entity(name = "user")
 public class User implements UserDetails {
 
@@ -54,6 +59,8 @@ public class User implements UserDetails {
 	@Column(nullable = false, length = 255)
 	private String username;
 	
+	private boolean deleted = Boolean.FALSE;
+	
 	private LocalDate createdAt ;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -75,7 +82,7 @@ public class User implements UserDetails {
 	@Override
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

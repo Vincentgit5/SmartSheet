@@ -1,0 +1,26 @@
+@charset "ISO-8859-1";
+
+.btn{
+	position: relative;
+	left: 400px;
+	width: 50%;
+}
+
+.modal-body img{
+	width:76px;
+	height:auto;
+	margin:0 auto;
+	display:block;
+	margin-bottom:25px;
+}
+.alert p{
+	font-size: 20px;
+    margin-bottom: 27px;
+ 	color:#5C5C5C;
+}
+
+.modal-body{
+	width:100%;
+ 	padding:20px;
+	text-align:center;
+}

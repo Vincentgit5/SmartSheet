@@ -40,7 +40,7 @@ public class Groupe {
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true,  mappedBy = "groupe")
 	private List<User> users;
 	
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "groupe")
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "groupe")
 	private List<GroupeRole> groupRoles;
 
 

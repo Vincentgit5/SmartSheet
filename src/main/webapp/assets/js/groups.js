@@ -10,33 +10,22 @@ function loadPage(page) {
 }
 
 document.getElementById('list-groups').addEventListener('click', function() {
-    loadPage('/list-groups');
+    loadPage('/group/list-groups');
 });
 
-// Create groupe form
-function loadPage(page) {
-    fetch(page)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('main-content').innerHTML = html;
-        })
-        .catch(error => console.log(error));
-}
-
 document.getElementById('create-group').addEventListener('click', function() {
-    loadPage('/create-group');
+    loadPage('addGroupe()');
 });
 
 
 // Create groupe
- function createGroupe(){
+ function addGroupe() {
 	 var name = document.getElementById('name').value;
 	 var description = document.getElementById('description').value;
-	 var ids = aArray.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+	 var ids = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
 	 .map(function(checkbox){
 		 return checkbox.value;
 	 })
-	 
 	 var data = {
 		 name : name,
 		 description : description,
@@ -45,7 +34,7 @@ document.getElementById('create-group').addEventListener('click', function() {
 	 
 	 var stringData = JSON.stringify(data);
 	 
-	 fetch('/create-group', {
+	 fetch('/group/add-group', {
 		 method: "POST",
 		 headers:{
 			 'Content-type': 'application/json'
@@ -62,23 +51,7 @@ document.getElementById('create-group').addEventListener('click', function() {
 		 .catch(function(error){
 			 console.error('Something wen wrong with the request :', error)
 		 })
+		 
+		
  }
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+

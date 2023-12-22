@@ -4,11 +4,6 @@
     margin-bottom: 1rem!important;
     width: 180%;
 }
-.p-3 {
-    padding: 1rem!important;
-    border-radius: 10px;
-    
-}
 
 .button-red {
 	border-width: 0px;
@@ -46,6 +41,11 @@ h6{
 img{
 	border-radius: 50%;
 }
+
+/*.footer{*/
+/*	position: relative;*/
+/*	bottom: -350px;*/
+/*}*/
 
 /*.form-control select {*/
 /*  max-height: 200px;  Ajustez la hauteur maximale selon vos besoins */

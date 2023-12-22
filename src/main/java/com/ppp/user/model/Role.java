@@ -25,25 +25,25 @@ import lombok.NoArgsConstructor;
 public class Role {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable = false, unique = true, length = 50)
 	private String name;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDateTime createdRoleDate;
+	private LocalDateTime createdAt;
 		
 	private String description;
 	
 	
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "role")
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "role")
 	private List<GroupeRole> groupRoles;
 	
 	@PrePersist
     public void prePersist() {
-        if (createdRoleDate == null) {
-            createdRoleDate = LocalDateTime.now();
+        if (createdAt == null) {
+        	createdAt = LocalDateTime.now();
         }
     }
 

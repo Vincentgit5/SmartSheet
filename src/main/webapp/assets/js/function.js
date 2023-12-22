@@ -9,4 +9,3 @@ function confirm_decision(name) {
     }
     return true;
 };
-   

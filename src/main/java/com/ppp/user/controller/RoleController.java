@@ -1,27 +1,28 @@
 package com.ppp.user.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.management.relation.RoleInfoNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ppp.user.model.Role;
+import com.ppp.user.model.User;
+import com.ppp.user.model.dto.RoleDTO;
 import com.ppp.user.repository.RoleRepository;
 import com.ppp.user.service.RoleService;
+import com.ppp.user.service.impl.RoleServiceImpl;
 
 @Controller
-@RequestMapping
+@RequestMapping("/role")
 public class RoleController {
 	
 	@Autowired
@@ -29,39 +30,23 @@ public class RoleController {
 	@Autowired
 	private RoleService roleService;
 	
-	@GetMapping("/create-role")
-	public String showRoleRegistrationForm(Model model) {
-		model.addAttribute("role", new Role());
-		return "user/create-role";
-	}
-	
-	@PostMapping("/create-role")
-	public String saveAnewRole(@ModelAttribute("role") 
-								 Role role, ModelMap model, BindingResult result) {
-		model.addAttribute("role", role);
-		System.out.println(role);
-		roleRepository.save(role);
-		return "user/list-roles";
-	}
-	
+//	@PreAuthorize("hasAuthority('ROLE_LIST_ROLES')")
 	@GetMapping("/list-roles")
 	public String listAlltheRoles(Model model) {
 		List<Role> getAllRoles = roleService.getAllRoles();
 		model.addAttribute("roles", getAllRoles);
-		System.out.println(getAllRoles);
+		
 		return "user/list-roles";
 	}
 	
-	@GetMapping("delete-role/{id}")
-	public String deleteRole(@PathVariable Long id) {
-		try {
-			 roleService.deleteRole(id);
-			 return " deleted sucessfully";
-		} catch (RoleInfoNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "redirect:/list-roles";
+	@GetMapping("/view-role-details/{name}")
+	public String viewRoleDetails(@PathVariable String name, Model model) {
+			Role roleFind = roleRepository.findByName(name);
+			model.addAttribute("roleFind", roleFind);
+			if(roleFind  == null) {
+				return "errors/role-not-found";
+			}
+	    return "user/role-details";
 	}
 
 }

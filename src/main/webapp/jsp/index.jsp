@@ -1,4 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" 
+							pageEncoding="ISO-8859-1"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,15 +22,21 @@
 	<link  href="assets/img/presprint.jpg" rel="icon">
 	
 	<!-- Google Fonts -->
-	<link href="https://fonts.gstatic.com" rel="preconnect">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 	
-	<!-- Vendor CSS Files -->
-	<link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-	<link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
-	
+	  <!-- Vendor CSS Files -->
+	  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+	  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+	  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+	  <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
+	  <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+	  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+	  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
 	<!-- Template Main CSS File -->
 	<link href="assets/css/style.css"  rel="stylesheet">
 	<link href="assets/css/smartsheet.css" rel="stylesheet">
@@ -64,21 +77,22 @@
 				<!-- End Messages Nav -->
 
 				<li class="nav-item dropdown pe-3">
+				<sec:authentication property="name" var="username" />
 				  <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown"> 
 				    <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle"> 
-				    <span class="d-none d-md-block dropdown-toggle ps-2">Vincent</span>
+				    <span class="d-none d-md-block dropdown-toggle ps-2">${username}</span>
 				  </a>
 				<!-- End Profile Iamge Icon -->
 
 					<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
 						<li class="dropdown-header">
-						  <h6>Djama Vincent</h6> <span>Web Designer</span>
+						  <h6>${username}</h6> <span>Web Designer</span>
 						</li>					
 						<li>
 						  <hr class="dropdown-divider">
 						</li>
 						<li>
-						  <a class="dropdown-item d-flex align-items-center" onclick="loadPage('/find/{email}/{username}')" href="#">
+						  <a class="dropdown-item d-flex align-items-center" onclick="loadPage('user/viewUser/{username}')" href="#">
 						   <i class="bi bi-person"></i> <span>MyProfile</span>
 						  </a>
 						</li>
@@ -86,7 +100,7 @@
 						  <hr class="dropdown-divider">
 						</li>
 						<li>
-						  <a class="dropdown-item d-flex align-items-center" href="#"> 
+						  <a class="dropdown-item d-flex align-items-center" href="/logout"> 
 							<i class="bi bi-box-arrow-right"></i> <span>SignOut</span>
 						  </a>
 						</li>
@@ -110,36 +124,36 @@
 			<li class="pp-module"><i class="bi bi-grid">
 			  </i> <span>Printing Press</span>
 			</li><!-- End Printing Press Nav -->
-
 			<li class="nav-item">
+			<sec:authorize access="hasRole('ROLE_VIEW_USER_PROFILE')"></sec:authorize>
 			   <a class="nav-link collapsed"data-bs-target="#user-management-nav" data-bs-toggle="collapse" href="#">
 			     <i class="fas fa-user"></i><h6>Users Management</h6> <i class="bi bi-chevron-down ms-auto"></i>
 			   </a>
-
 				<ul id="user-management-nav" class="nav-content collapse "data-bs-parent="#sidebar-nav">
 					<p> Users </p>
 					
+					<sec:authorize access="hasRole('ROLE_LIST_USERS')"></sec:authorize>
+					  <li class="nav-item">
+					    <a class="nav-link collapsed" onclick="loadPage('/user/list-users')" href="#"> <i class="bi bi-person"></i> <span>List users</span> </a>
+					  </li>
+					<sec:authorize access="hasRole('ROLE_ADD_USER')"></sec:authorize>
+					  <li class="nav-item">
+					    <a class="nav-link collapsed" onclick="loadPage('/user/add-user')" href="#"> <i class="fas fa-user"></i><span>Add user</span> </a>
+					  </li>
+					
+					
+					 <p>Groups and Roles</p>
+					<sec:authorize access="hasRole('ROLE_LIST_GROUPS')"></sec:authorize>
+					  <li class="nav-item">
+					    <a class="nav-link collapsed" onclick="loadPage('/group/list-groups')"  href="#" ><i class="bi bi-person"></i> <span>List groups</span></a>
+					  </li>
+					
+					
+					<sec:authorize access="hasRole('ROLE_LIST_ROLES')"></sec:authorize>
 					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('list-users')" href="#"> <i class="bi bi-person"></i> <span>List users</span> </a>
+					  <a class="nav-link collapsed" onclick="loadPage('/role/list-roles')"  href="#"><i class="bi bi-card-list"></i> <span>List roles</span> </a>
 					</li>
-					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('/create-user')" href="#"> <i class="fas fa-user"></i><span>Create user</span> </a>
-					</li><!-- End Register Page Nav -->
-
-					<p>Groups and Roles</p>
-
-					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('create-group')" href="#"><i class="bi bi-card-list"></i><span>Create group</span></a>
-					</li>
-					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('list-groups')"  href="#" ><i class="bi bi-person"></i> <span>List groups</span></a>
-					</li>
-					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('create-role')" href="#"><i class="bi bi-card-list"></i> <span>Create role</span> </a>
-					</li>
-					<li class="nav-item">
-					  <a class="nav-link collapsed" onclick="loadPage('list-roles')"  href="#"><i class="bi bi-card-list"></i> <span>List roles</span> </a>
-					</li> <!-- End list Role Page Nav -->					
+									
 				</ul> 
 				<!-- End of user management Nav -->
 				
@@ -169,10 +183,12 @@
 				
 				<!-- start of bill management Nav -->
 				<li class="nav-item">
+				<c:if test="${user.groupe.name == 'Bill Management'}"></c:if>
 			    <a class="nav-link collapsed"data-bs-target="#bill-management-nav" data-bs-toggle="collapse" href="#">
 			      <i class="fas fa-receipt"></i><h6>Bill Management</h6> <i class="bi bi-chevron-down ms-auto"></i>
 			    </a>
-				<ul id="bill-management-nav" class="nav-content collapse "data-bs-parent="#sidebar-nav">					
+				<ul id="bill-management-nav" class="nav-content collapse "data-bs-parent="#sidebar-nav">
+<%-- 				    <c:if test="${user.groupe.role.name.contains('ROLE_CASHIER')"></c:if>					 --%>
 					<li class="nav-item">
 					  <a class="nav-link collapsed" onclick="getListOfUser()" href="#"> <i class="bi bi-person"></i> <span>List of bill</span> </a>
 					</li>
@@ -182,9 +198,9 @@
 					<li class="nav-item">
 					  <a class="nav-link collapsed" href="#"> <i class="bi bi-person"></i> <span>List of proforma</span> </a>
 					</li>
-					<li class="nav-item">
-					  <a class="nav-link collapsed"  href="#" ><i class="bi bi-person"></i> <span>Search proforma</span></a>
-					</li>			
+<!-- 					<li class="nav-item"> -->
+<!-- 					  <a class="nav-link collapsed"  href="#" ><i class="bi bi-person"></i> <span>Search proforma</span></a> -->
+<!-- 					</li>			 -->
 				</ul> 
 				<!-- End of bill management Nav -->
 				
@@ -202,25 +218,22 @@
 					</li>
 				</ul> 
 				<!-- End of production management Nav -->
-				
+			<c:if test="${user.groupe.name == 'Fabric Printing'}">
 			<li class="pp-module"><i class="bi bi-grid">
 			  </i> <span>Fabric Printing</span>
 			</li>
+			</c:if>
+			<c:if test="${user.groupe.name == 'Screen Printing'}">
 			<li class="pp-module"><i class="bi bi-grid">
 			  </i> <span>Screen Printing</span>
 			</li>
+			</c:if>
 		   </ul>
 		</aside><!-- End Sidebar-->
 
 		<main id="main" class="main">
 			<div class="pagetitle">
 				<h1>Dashboard</h1>
-				<nav>
-				  <ol class="breadcrumb">
-				    <li class="breadcrumb-item"><a href="index">Home</a></li>
-					<li class="breadcrumb-item active">Dashboard</li>
-				  </ol>
-				</nav>
 			</div>
 			<section  class="section dashboard">
 			  <div class="row">
@@ -237,16 +250,23 @@
 	</footer><!-- End Footer -->
 
   <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
   <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="assets/vendor/echarts/echarts.min.js"></script>
+  <script src="assets/vendor/quill/quill.min.js"></script>
   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/users.js"></script>
   <script src="assets/js/role.js"></script>
+  <script src="assets/js/groups.js"></script>
   
 
 </body>
