@@ -1,0 +1,97 @@
+
+
+.btn {
+	position: relative;
+	left: 88%;
+	bottom: 40px;
+}
+
+.rounded-circle{
+	width: 30px;
+	border-width: 0.1px;
+	color: #575958;
+	border-style: solid;
+}
+
+
+.button-delete{
+	border-style: none;
+	background-color: transparent;
+	color: orange;
+}
+.button-edite{
+	border-style: none;
+	background-color: transparent;
+}
+
+.button-see {
+	border-style: none;
+	background-color: transparent;
+	color: #0d6efd;
+}
+
+.even-row {
+  background-color: #f6f9ff; /* Couleur de fond pour les lignes paires */
+}
+
+.odd-row {
+  background-color: #ffffff; /* Couleur de fond pour les lignes impaires */
+}
+
+.table {
+  --bs-table-bg: unset;
+  }
+
+/*------------ Deleted Sucessfully moda----------l*/
+.modal-body img{
+	width:76px;
+	height:auto;
+	margin:0 auto;
+	display:block;
+	margin-bottom:25px;
+}
+.modal-body h{
+	font-size: 20px;
+    margin-bottom: 27px;
+ 	color:#5C5C5C;
+}
+
+.modal-body p{
+	font-size: 15px;
+    margin-bottom: 27px;
+ 	color:#5C5C5C;
+}
+
+.modal-body{
+	width:100%;
+ 	padding:20px;
+	text-align:center;
+}
+
+/*----------Are you sure you want to delete user moal------------*/
+.modal-foote button{
+	position: relative;
+    bottom: 3px;
+}
+
+.modal-foote .btn-primary{
+	left: 120px;
+	width: 20%;
+}
+
+.modal-foote .btn-danger{
+	left: 190px;
+	width: 20%;
+}
+
+.modal-body h5{
+	font-size: 20px;
+    margin-bottom: 27px;
+ 	color:#5C5C5C;
+}
+
+.alert p{
+	font-size: 15px;
+ 	color:#5C5C5C;
+}
+  

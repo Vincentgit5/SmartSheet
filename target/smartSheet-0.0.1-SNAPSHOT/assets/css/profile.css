@@ -1,0 +1,14 @@
+@charset "ISO-8859-1";
+
+.form-control {
+	position: relative;
+	right: 15%;
+	width: 55%;
+}
+
+/*@media (min-width: 1200px) {*/
+/*  #main, #footer {*/
+/*    margin-left: px;*/
+/*    margin-right: 346px;*/
+/*  }  */
+/*  }*/
